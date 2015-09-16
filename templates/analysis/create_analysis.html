@@ -1,0 +1,46 @@
+{% extends 'base.html' %}
+
+{% block title %}Create a new analysis{% endblock %}
+
+{% block main_body %}
+
+<script>
+	function get_project_id(){
+		p_id = $("#id_project_selector").val();
+		window.location = "project_id/" + p_id + "/annotate";
+	}
+</script>
+<div class="col-md-8">
+<h2 class="section-header">Create a new analysis</h2>
+	{% if user_has_projects%}
+
+	<div>
+		<form action="." method="POST">
+			{% csrf_token %}
+			<div class="form-group">
+				<label for="id_project_selector">Select a project:</label>
+				<select class="form-control" name="selected_project_id" id="id_project_selector">
+					{% for project_id in all_projects %}
+						<option>{{project_id}}</option>
+					{% endfor %}
+				</select>
+
+			</div>
+			<div class="form-group">
+				<label for="analysis_name">Analysis name:</label>
+				<input type="text" class="form-control" id="analysis_name" name="analysis_name" placeholder="Enter a name for this analysis...only used for your own reference." required></input>
+			</div>
+
+			<input type="submit" class="btn btn-primary" value="Next"></input>
+		</form>
+	</div> 
+	{% else %}
+		<div class="alert alert-warning">You have not linked your account to any project
+</div>
+		
+		<a href="{% url 'add_project' %}" class="btn btn-primary">Add a project</a>
+
+	{% endif %}
+	</div>
+</div>
+{% endblock %}

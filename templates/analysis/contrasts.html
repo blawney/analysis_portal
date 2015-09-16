@@ -1,0 +1,176 @@
+{% extends 'base.html' %}
+
+{% block main_body %}
+
+
+<script>
+
+
+function add_contrast(){
+	console.log('add contrast');
+	if ( $("#contrast_choice_form input[name='contrast_radio']:checked").val() == 'all'){
+		$("#contrast_radio_2").prop("checked", true);
+	}
+	if ( $("#contrast_spec_div").css('display') == 'none' ){
+		$("#contrast_spec_div").show();
+		$("#submit_error_div").css('display','none');
+	}
+	else{
+		var counter = parseInt($("#counter").val()) + 1;
+		$("#counter").val(counter);
+		var dropdown_menu_1 = $("#contrast_add_table_body .contrast_spec_row td:first select").clone().attr('id', 'contrast_'+ counter +'_condition_A').attr('name', 'contrast_'+ counter +'_condition_A');
+		var dropdown_menu_2 = $("#contrast_add_table_body .contrast_spec_row td:first select").clone().attr('id', 'contrast_'+ counter +'_condition_B').attr('name', 'contrast_'+ counter +'_condition_B');
+		var rm_button = $("#contrast_add_table_body .contrast_spec_row td:last").clone()
+		new_tr_element = $('<tr></tr>').attr('class','contrast_spec_row');
+		new_td_element_1 = $('<td></td>');
+		new_td_element_1.append(dropdown_menu_1);
+		new_td_element_2 = $('<td>versus</td>');
+		new_td_element_3 = $('<td></td>');
+		new_td_element_3.append(dropdown_menu_2);
+		new_tr_element.append(new_td_element_1).append(new_td_element_2).append(new_td_element_3).append(rm_button);
+		$("#contrast_add_table_body").append(new_tr_element);
+	}
+	return false;
+}
+
+function select_checker(){
+	if (!has_self_contrast()){
+		$("#submit_error_div").css('display','none');	
+	}
+}
+
+function remove_row(){
+	if ($(".contrast_spec_row").length == 1){
+		$("#contrast_spec_div").css('display', 'none');
+	} 
+	else {
+		$(this).parents('tr').remove();
+	}
+	console.log(has_self_contrast());
+	if (!has_self_contrast()){
+		$("#submit_error_div").css('display','none');	
+	}
+	return false;
+}
+
+function has_self_contrast(){
+
+	// get all the dropdown values and put into a dictionary-like object
+	var x = $(".condition_selector");
+	var obj1 = {};
+	d = $.each(x, function(index, value){
+		obj1[$(value).attr('name')] = $(value).val();
+	});
+
+	// the values are most likely in the correct order, but sort so we can compare the pairs.  
+	// due to the choice of the naming, the pairs will appear next to each other in the list, so we can easily check for "self-compares"
+	var sorted_keys = Object.keys(obj1).sort();
+	var i, len = sorted_keys.length;
+	for (i=0; i<len/2; ++i) {
+		if (obj1[sorted_keys[2*i]] == obj1[sorted_keys[2*i+1]]){
+			return true;
+		}
+	}
+	return false;
+}
+
+function validate_choices(){
+	if ( $("#contrast_choice_form input[name='contrast_radio']:checked").val() == 'all'){
+		console.log('all');
+			$("#contrast_choice_form").submit();
+	}
+	else{
+		if ($("#contrast_spec_div").css('display') != 'none'){
+			//post the form to a specific view
+			if (has_self_contrast()){
+				$("#submit_error_div").css('display', 'inline-block');
+				$("#submit_error_msg").text("There is a contrast of a group against itself!");
+			}
+			else{
+				$("#contrast_spec_form").submit();
+			}
+		}
+		else{
+			//warn
+			$("#submit_error_div").css('display', 'inline-block');
+			$("#submit_error_msg").text("Please specify the contrasts.");
+		}
+	}
+	return false;
+}
+</script>
+<div class="col-md-8">
+
+<h2 class="section-header">Contrasts:</h2>
+<form id="contrast_choice_form" action="{% url 'analysis_summary' %}" method="POST">
+	{% csrf_token %}
+	<input name="analysis_pk" type="hidden" value="{{analysis_pk}}"/>
+	<div class="radio">
+		<label>
+			<input type="radio" name="contrast_radio" id="contrast_radio_1" value="all" checked>
+			All pairwise comparisons of groups ({{ all_conditions|join:', ' }})
+		</label>
+	</div>
+	<div><b>-OR-</b></div>
+	<div class="radio">
+		<label>
+			<input type="radio" name="contrast_radio" id="contrast_radio_2" value="individual">
+			Specify individual contrasts.  Note that the order is not important, but to obtain the "natural" contrast (e.g. knockout versus wild-type) then put the experimental condition first.
+		</label>
+	</div>
+</form>
+
+<div style="height:15px;"></div>
+		<a id="add_contrast_button" onclick="add_contrast();" class="btn btn-primary btn-sm">Add new contrast</a>
+		<br/>
+<div id="contrast_spec_div" style="display: none; ">
+		<form id="contrast_spec_form" action="{% url 'analysis_summary' %}" method="POST">
+		{% csrf_token %}
+		<input type="hidden" value="0" id="counter"/>
+		<input name="analysis_pk" type="hidden" value="{{analysis_pk}}"/>
+		<table id="contrast_add_table" class="table" style="text-align:center;">
+			<thead>
+				<tr>
+					<th>Condition 1</th>
+					<th></th>		
+					<th>Condition 2</th>
+					<th style="text-align:center;">Remove</th>		
+				</tr>
+			</thead>
+			<tbody id="contrast_add_table_body">
+			<tr class="contrast_spec_row">
+				<td>
+					<select class="form-control condition_selector" id="contrast_0_condition_A" name="contrast_0_condition_A" onchange="select_checker();">
+						{% for condition in all_conditions %}
+							<option>{{condition}}</option>
+						{% endfor %}
+					</select>		
+				</td>
+				<td>versus</td>
+				<td>
+					<select class="form-control condition_selector" id="contrast_0_condition_B" name="contrast_0_condition_B" onchange="select_checker();">
+						{% for condition in all_conditions %}
+							<option>{{condition}}</option>
+						{% endfor %}
+					</select>
+				</td>
+				<td>
+					<a href="javascript:;" class="btn btn-default btn-lg" id="menu-toggle" onclick="remove_row.call(this);"> 
+						<span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
+					</a>
+				</td>
+			</tr>
+			</tbody>
+
+		</table>
+		</form>
+</div>
+		<div style="height:15px;"></div>
+		<a id="create_analysis_button" onclick="validate_choices();" class="btn btn-primary btn-lg">Next</a>
+		<div id="submit_error_div" style="display:none; color:red;">
+		<span class="glyphicon glyphicon-warning-sign" style="font-size:2em;" aria-hidden="true"></span>
+		<span id="submit_error_msg"></span>
+		</div>
+</div>
+
+{% endblock %}

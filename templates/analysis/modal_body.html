@@ -1,0 +1,11 @@
+<b>Samples used:</b><br/>
+{% for sample in samples %}
+	{{sample.sample.name}} : {{sample.condition}}
+	<br/>
+{% endfor %}
+<div style="height:15px;"></div>
+<b>Contrasts performed:</b><br/>
+{% for c1,c2 in contrasts %}
+	{{c1}} versus {{c2}}
+	<br/>
+{% endfor %}

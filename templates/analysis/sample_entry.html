@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+
+{% block main_body %}
+
+<div class="col-md-8">
+<h2 class="section-header">Annotate samples</h2>
+        <form id="annotate_form" method="post" action="{% url 'annotation_summary' %}">
+            {% csrf_token %}
+		<input type="hidden" name="analysis_pk" value="{{analysis_pk}}">
+<table class="table table-hover" id="id_sample_table_form">
+<thead>
+<tr>
+<th>Use</th>
+<th>Sample</th>
+<th>Condition</th>
+</tr></thead>
+<tbody>
+{% for form in forms %}
+<tr>
+<td>
+            {% for hidden in form.hidden_fields %}
+                {{ hidden }}
+            {% endfor %}
+{{form.is_used}}
+</td>
+<td>
+{{form.instance.sample.name}}
+</td>
+		<td>
+                {{ form.condition }}
+                {{ form.condition.errors }}
+		</td>
+</tr>
+{% endfor %}
+</tbody></table>
+            <input type="submit" class="btn btn-primary" name="submit" value="Annotate!" />
+        </form>
+</div>
+{% endblock %}

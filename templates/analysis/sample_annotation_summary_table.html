@@ -1,0 +1,37 @@
+
+<form method="POST" action="{% url 'create_analysis' %}">
+	{% csrf_token %}
+	<input type="hidden" value="{{analysis_pk}}" name="analysis_pk"></input>
+	<input style="margin-bottom:20px;" type="submit" class="btn btn-primary btn-xs" name="submit" value="Edit annotations" />
+</form>
+<table class="table table-hover" id="id_annotation_summary_table">
+	<thead>
+		<tr>
+			<th>Condition</th>
+			<th>Samples</th>
+		</tr>
+	</thead>
+	{% for condition, sample_list in condition_to_sample_map.items %}
+		<tr>
+			<td>
+				{{condition}}
+			</td>
+			<td>
+				<ul>
+					{% for sample in sample_list %}
+						<li>{{sample}}</li>
+					{% endfor %}
+				</ul>
+			</td>
+		</tr>	
+	{% endfor %}
+</table>
+{% if skipped_samples %}
+	<h3>Samples omitted from analysis:</h3>
+	<ul>
+	{% for s in skipped_samples %}
+		<li>{{s}}</li>
+	{% endfor %}
+	</ul>
+{% endif %}
+

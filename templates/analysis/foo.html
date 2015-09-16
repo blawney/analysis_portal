@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+
+{% block main_body %}
+                <form action="{% url 'annotate_samples' %}" method="POST" id="create_new_analysis_form" role="form">
+                {% csrf_token %}
+                <input type="hidden" name="num_samples" value="{{num_samples}}">
+                <input type="hidden" name="project_id" value="{{project_id}}">
+
+<table class="table table-bordered table-hover" id="id_sample_table_form">
+<thead>
+<tr>
+<th>Sample</th>
+<th>Condition</th>
+</tr></thead>
+<tbody>
+{% for sample in samples %}
+	<tr><td>{{sample.name}}</td>
+	<td><input id="id_{{sample.name}}" name="{{sample.name}}_condition" class="form-control" type="text" required="" size=20 value="{{sample.condition}}"></input></td></tr>
+{% endfor%}
+</tbody>
+</table>
+<button type="submit" class="btn btn-primary">Next</button>
+</form>
+
+{% endblock %}

@@ -1,0 +1,38 @@
+{% extends 'base.html' %}
+
+{% block title %}Add a new project{% endblock %}
+
+{% block main_body %}
+<div class="col-md-8">
+	<div>
+		<h2 class="section-header">Add a new project</h2>
+		<form action="." method="POST" id="add_new_project_form">
+		{% csrf_token %}
+			<div class="form-group">
+				<input type="text" class="form-control" name="project_id" id="new_project_input" placeholder="Enter your project ID from your iLab account..." required></input>
+			</div>
+			<button type="submit" class="btn btn-primary">Add this project!</button>
+		</form>
+	</div>
+
+	<div style="padding-top:35px;">
+	{% if queried %}
+		{% if not already_existed %}
+			{% if success %}
+				<span class="alert alert-success">
+					{{message}}
+				</span>
+			{% else %}
+				<span class="alert alert-danger">
+					{{message}}
+				</span>
+			{% endif %}
+		{% else %}
+				<span class="alert alert-info">
+					{{message}}
+				</span>		
+		{% endif %}
+	{% endif %}
+	</div>
+</div>
+{% endblock %}

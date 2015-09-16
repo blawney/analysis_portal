@@ -1,0 +1,11 @@
+workflow:
+
+user register a project
+	-on backend, reads project directory, puts those in BaseSample table
+
+when user 'creates analysis'
+	- initiate a Analysis object
+	- populate with user, project, and a common name (for their use more than anything)
+	- automatically populate the AnalysisSample table with the samples for this project, user, etc.
+
+

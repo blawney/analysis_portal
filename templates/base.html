@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+
+	<head>
+
+	{% load staticfiles %}
+
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta name="description" content="">
+	<meta name="author" content="">
+
+	<title>{% block title %}CCCB Analysis Portal{% endblock %}</title>
+
+	<!-- Bootstrap Core CSS -->
+	<link href="{% static 'bootstrap/css/bootstrap.min.css' %}" rel="stylesheet">
+
+	<!-- Custom CSS -->
+	<link href="{% static 'custom.css' %}" rel="stylesheet">
+
+	<!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+	<!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+	<!--[if lt IE 9]>
+	<script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+	<script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+	<![endif]-->
+
+	</head>
+
+	<body>
+		<div class="simple_header">
+			
+				<span class="right_header">(Logged in as {{request.user.username}})  <a id="logout_link" href="{% url 'auth_logout' %}?next=/accounts/login" >Logout</a><img id='header_logo' src="{% static 'images/CCCB_Logo.png' %}"></img></span>
+			
+			<div class="spacer_div">
+			</div>
+		</div>
+		<div id="title_tag"><span id="title" class="left_header"></span></div>
+		</div>
+		<div id="wrapper" class="toggled">
+
+			<!-- Sidebar -->
+			<div id="sidebar-wrapper">
+				<a href="javascript:;" class="btn btn-default btn-lg" id="menu-toggle-inside" onclick="do_toggle(this)"> 
+					<span id="close-icon" class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span>
+				</a>
+				<ul class="sidebar-nav">
+					<li class="sidebar-brand">
+						<span id="nav-header">Options: </span>
+					</li>
+					<li>
+						<a href="{% url 'add_project' %}">Add new project</a>
+					</li>
+					<li>
+						<a href="{% url 'create_analysis' %}">Create new analysis</a>
+					</li>
+					<li>
+						<a href="{% url 'analysis_history' %}">View analysis history</a>
+					</li>
+				</ul>
+			</div>
+			<!-- /#sidebar-wrapper -->
+
+			<!-- Page Content -->
+			<div id="page-content-wrapper">
+				<div id="main_content" class="container-fluid">
+					<div class="row">
+						<div class="col-md-2">
+							<a href="javascript:;" class="btn btn-default btn-lg" id="menu-toggle" onclick="do_toggle(this)"> 
+								<span class="glyphicon glyphicon-menu-hamburger" aria-hidden="true"></span> 
+								Menu 
+								<span id="open-close-icon" class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span>
+							</a>
+						</div>
+						<div class="col-md-10">
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-md-1">
+						</div>
+						<div class="col-md-8">
+						{% block main_body %}{% endblock %}
+						</div>
+					</div>
+				</div>
+			</div>
+			<!-- /#page-content-wrapper -->
+		</div>
+		<!-- /#wrapper -->
+
+		<!-- jQuery -->
+		<script src="{% static 'bootstrap/js/jquery.js' %}"></script>
+
+		<!-- Bootstrap Core JavaScript -->
+		<script src="{% static 'bootstrap/js/bootstrap.min.js' %}"></script>
+
+
+		<!-- for csrf -->
+		<script src="{% static 'csrf.js' %}"></script>
+
+		<!-- other JS- custom functionality -->
+		<script src="{% static 'custom.js' %}"></script>
+
+	</body>
+
+</html>
+

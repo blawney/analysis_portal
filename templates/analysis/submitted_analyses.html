@@ -1,0 +1,143 @@
+{% extends 'base.html' %}
+
+{% block title %}Submitted analyses{% endblock %}
+
+{% block main_body %}
+<style>
+	.align_middle{
+		vertical-align:middle;
+	}
+</style>
+<script>
+	function get_command_info(pk){
+		$.get('/analysis/analysis_parameters/', {analysis_summary_pk:pk}, function(data){
+			$("#modal-body").html(data);
+			$('#myModal').modal('show');
+	});
+	}
+
+
+</script>
+<h2 class="section-header">Analysis summaries</h2>
+<h3>Your submitted analyses (for all projects associated with your username):</h3>
+<table class="table table-hover" id="user_submitted_analyses_table">
+	<thead>
+		<tr>
+		<th>User</th>
+		<th>Project</th>
+		<th>Analysis name</th>
+		<th>Command</th>
+		<th>Time submitted</th>
+		<th>Time completed</th>
+		<th>Result location</th>
+		<th>Errors</th>
+		</tr>
+	</thead>
+	{% for analysis_summary in user_summaries %}
+	<tr>
+	<td class="align_middle">
+	{{analysis_summary.analysis.user}}
+	</td>
+	<td class="align_middle">
+	{{analysis_summary.analysis.project.ilab_id}}
+	</td>
+	<td class="align_middle">
+		{{analysis_summary.analysis.common_name}}
+	</td>
+	<td class="align_middle">
+	<a class="btn btn-xs" onclick="get_command_info({{analysis_summary.pk}})";>
+	<!--<span data-toggle="modal" data-target="#myModal" class="glyphicon glyphicon-search" style="font-size:2em;" aria-hidden="true"></span>-->
+	<span class="glyphicon glyphicon-search" style="font-size:2em;" aria-hidden="true"></span>
+	</a>
+	</td>
+	<td class="align_middle">
+	{{analysis_summary.start_time}}
+	</td>
+	<td class="align_middle">
+	{% if analysis_summary.is_complete %}
+		{{analysis_summary.finish_time}}
+	{% else %}
+		{{'Processing...'}}
+	{% endif %}
+	</td>
+	<td class="align_middle">
+	{{analysis_summary.result_url}}
+	</td>
+	<td class="align_middle">
+	{% if analysis_summary.has_error %}
+		<span class="glyphicon glyphicon-warning-sign" aria-hidden="true"></span>
+	{% endif %}
+	</td>
+	</tr>	
+	{% endfor %}
+</table>
+<div style="height:25px;"></div>
+<h3>Other analyses performed on your projects:</h3>
+<table class="table table-hover" id="assoc_proj_submitted_analyses_table">
+	<thead>
+		<tr>
+		<th>User</th>
+		<th>Project</th>
+		<th>Analysis name</th>
+		<th>Command</th>
+		<th>Time submitted</th>
+		<th>Time completed</th>
+		<th>Result location</th>
+		<th>Errors</th>
+		</tr>
+	</thead>
+	{% for analysis_summary in assoc_proj_summaries %}
+	<tr>
+	<td class="align_middle">
+	{{analysis_summary.analysis.user}}
+	</td>
+	<td class="align_middle">
+	{{analysis_summary.analysis.project.ilab_id}}
+	</td>
+	<td class="align_middle">
+		{{analysis_summary.analysis.common_name}}
+	</td>
+	<td class="align_middle">
+	<a class="btn btn-xs" onclick="get_command_info({{analysis_summary.pk}})";>
+	<!--<span data-toggle="modal" data-target="#myModal" class="glyphicon glyphicon-search" style="font-size:2em;" aria-hidden="true"></span>-->
+	<span class="glyphicon glyphicon-search" style="font-size:2em;" aria-hidden="true"></span>
+	</a>
+	</td>
+	<td class="align_middle">
+	{{analysis_summary.start_time}}
+	</td>
+	<td class="align_middle">
+	{% if analysis_summary.is_complete %}
+		{{analysis_summary.finish_time}}
+	{% else %}
+		{{'Processing...'}}
+	{% endif %}
+	</td>
+	<td class="align_middle">
+	{{analysis_summary.result_url}}
+	</td>
+	<td class="align_middle">
+	{% if analysis_summary.has_error %}
+		<span class="glyphicon glyphicon-warning-sign" aria-hidden="true"></span>
+	{% endif %}
+	</td>
+	</tr>	
+	{% endfor %}
+</table>
+
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="myModalLabel">Analysis summary</h4>
+      </div>
+      <div id="modal-body" class="modal-body">
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

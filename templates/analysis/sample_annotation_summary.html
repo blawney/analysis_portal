@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+
+{% block main_body %}
+<div class="col-md-8">
+<h2 class="section-header">Sample annotation summary </h2>
+{% include 'analysis/sample_annotation_summary_table.html' %}
+
+		<div style="height:15px;"></div>
+<form method="POST" action="{% url 'specify_contrasts' %}">
+	{% csrf_token %}
+	<input type="hidden" value="{{analysis_pk}}" name="analysis_pk"></input>
+	<input type="submit" class="btn btn-primary btn-lg" name="submit" value="Next" />
+</form>
+</div>
+{% endblock %}

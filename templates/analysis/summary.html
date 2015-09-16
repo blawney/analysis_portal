@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+
+{% block main_body %}
+<div class="col-md-8">
+<h1 class="section-header">Analysis Summary</h1>
+
+<h2>Sample annotations:</h2> 
+{% include 'analysis/sample_annotation_summary_table.html' %}
+
+
+<h2>The following {%if contrast_pairings|length > 1 %} {{contrast_pairings | length}} {{'contrasts'}}{%else%}{{'contrast'}}{%endif%} will be performed:</h2>
+<form method="POST" action="{% url 'specify_contrasts' %}">
+	{% csrf_token %}
+	<input type="hidden" value="{{analysis_pk}}" name="analysis_pk"></input>
+	<input type="submit" class="btn btn-primary btn-xs" name="submit" value="Edit contrasts" />
+</form>
+<table class="table table-hover" id="id_contrast_summary_table">
+<thead>
+<tr>
+<th>Condition 1</th>
+<th>Condition 2</th>
+</tr>
+</thead>
+{% for condition_1, condition_2 in contrast_pairings %}
+<tr>
+<td>
+{{condition_1}}
+</td>
+<td>
+{{condition_2}}
+</td>
+</tr>	
+{% endfor %}
+</table>
+<div style="height:15px;"></div>
+<form id="submit_analysis_form" method="POST" action="{% url 'submit_analysis' %}">
+	{% csrf_token %}
+	<input type="hidden" value="{{analysis_pk}}" name="analysis_pk"/>
+	<input type="hidden" value="{{contrast_pairing_str}}" name="contrast_pairing_str"/>
+	<input type="submit" class="btn btn-primary btn-lg" value="Create and submit analysis"></input>
+</form>
+</div>
+{% endblock %}
